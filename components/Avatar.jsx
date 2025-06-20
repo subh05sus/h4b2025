@@ -43,95 +43,61 @@ export function Avatar(props) {
   // Enhanced Text-to-Speech with proper viseme timing
   useEffect(() => {
     if (speak && text.trim()) {
-      // Initialize audio context for better audio analysis
-      const initAudioContext = async () => {
-        if (!audioContextRef.current) {
-          audioContextRef.current = new (window.AudioContext ||
-            window.webkitAudioContext)();
-          analyserRef.current = audioContextRef.current.createAnalyser();
-          analyserRef.current.fftSize = 256;
-          audioDataRef.current = new Uint8Array(
-            analyserRef.current.frequencyBinCount
-          );
-        }
-      };
-
-      initAudioContext();
-
-      // Create enhanced speech synthesis utterance
+      // Create speech synthesis utterance
       const utterance = new SpeechSynthesisUtterance(text);
       utteranceRef.current = utterance;
-
-      // Configure speech settings for better clarity
       utterance.rate = 0.9;
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
 
-      // Enhanced viseme generation from text
+      // Generate viseme sequence with fixed duration (no time differences)
       const generateVisemeSequence = (text) => {
-        const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+        const chars = text
+          .toUpperCase()
+          .replace(/[^A-Z]/g, "")
+          .split("");
         const visemeSequence = [];
+        const visemeDuration = 70; // Faster: 70ms per viseme
         let timeOffset = 0;
-
-        words.forEach((word, wordIndex) => {
-          const wordDuration = word.length * 100 + 200; // Base timing per word
-
-          for (let i = 0; i < word.length; i++) {
-            const char = word[i].toUpperCase();
-            const viseme = CORRESPONDING_VISEME[char] || "viseme_sil";
-            const phonemeDuration = getPhonemeDuration(char);
-
-            visemeSequence.push({
-              viseme: viseme,
-              startTime: timeOffset,
-              duration: phonemeDuration,
-              intensity: getVisemeIntensity(char, i, word.length),
-            });
-
-            timeOffset += phonemeDuration;
-          }
-
-          // Add slight pause between words
-          if (wordIndex < words.length - 1) {
-            visemeSequence.push({
-              viseme: "viseme_sil",
-              startTime: timeOffset,
-              duration: 100,
-              intensity: 0,
-            });
-            timeOffset += 100;
-          }
+        chars.forEach((char, i) => {
+          const viseme = CORRESPONDING_VISEME[char] || "viseme_sil";
+          visemeSequence.push({
+            viseme,
+            startTime: timeOffset,
+            duration: visemeDuration,
+            intensity: VISEME_INTENSITY[viseme] || 0.5,
+          });
+          timeOffset += visemeDuration;
         });
-
+        // Add a silence at the end
+        visemeSequence.push({
+          viseme: "viseme_sil",
+          startTime: timeOffset,
+          duration: visemeDuration,
+          intensity: 0,
+        });
         return visemeSequence;
       };
 
-      // Generate viseme sequence
       visemeQueue.current = generateVisemeSequence(text);
       visemeStartTime.current = Date.now();
 
-      // Handle speech events
       utterance.onstart = () => {
         visemeStartTime.current = Date.now();
       };
-
       utterance.onend = () => {
         currentVisemeData.current = { viseme: "viseme_sil", intensity: 0 };
         visemeQueue.current = [];
         setSpeak(false);
       };
-
       utterance.onerror = () => {
         currentVisemeData.current = { viseme: "viseme_sil", intensity: 0 };
         visemeQueue.current = [];
         setSpeak(false);
       };
-
-      // Start speech
       speechSynthesis.speak(utterance);
     }
-
-    // Cleanup function
+    // Cleanup
     return () => {
       if (utteranceRef.current) {
         speechSynthesis.cancel();
@@ -141,43 +107,14 @@ export function Avatar(props) {
     };
   }, [speak, text, setSpeak]);
 
-  // Helper functions for realistic viseme timing
-  const getPhonemeDuration = (phoneme) => {
-    const viseme = CORRESPONDING_VISEME[phoneme] || "viseme_sil";
-    return PHONEME_DURATIONS[viseme] || 120;
-  };
-
-  const getVisemeIntensity = (phoneme, position, wordLength) => {
-    const viseme = CORRESPONDING_VISEME[phoneme] || "viseme_sil";
-    let baseIntensity = VISEME_INTENSITY[viseme] || 0.5;
-
-    // Add positional and contextual adjustments
-    if (position === 0) {
-      baseIntensity *= 1.1; // Slightly emphasize word beginnings
-    } else if (position === wordLength - 1) {
-      baseIntensity *= 0.9; // Slightly reduce word endings
-    }
-
-    // Reduce intensity for middle consonants in long words
-    if (wordLength > 5 && position > 1 && position < wordLength - 2) {
-      baseIntensity *= 0.8;
-    }
-
-    // Add slight randomization for natural variation
-    const variation = (Math.random() - 0.5) * 0.1;
-    return Math.max(0.1, Math.min(1.0, baseIntensity + variation));
-  };
-
-  // Enhanced animation frame update for realistic lip-sync
+  // Remove time differences: use fixed duration for all visemes
   useFrame(() => {
-    // Update current viseme based on timing
     if (visemeQueue.current.length > 0) {
       const currentTime = Date.now() - visemeStartTime.current;
       const activeViseme = visemeQueue.current.find(
         (v) =>
           currentTime >= v.startTime && currentTime < v.startTime + v.duration
       );
-
       if (activeViseme) {
         currentVisemeData.current = activeViseme;
       } else if (
@@ -188,13 +125,10 @@ export function Avatar(props) {
         currentVisemeData.current = { viseme: "viseme_sil", intensity: 0 };
       }
     }
-
     if (headRef.current && teethRef.current) {
       const headMorphTargets = headRef.current.morphTargetDictionary;
       const teethMorphTargets = teethRef.current.morphTargetDictionary;
-
       if (headMorphTargets && teethMorphTargets) {
-        // Enhanced viseme blending with proper falloff
         Object.keys(headMorphTargets).forEach((key) => {
           if (key.startsWith("viseme_")) {
             const index = headMorphTargets[key];
@@ -203,8 +137,7 @@ export function Avatar(props) {
               const targetValue = isCurrentViseme
                 ? currentVisemeData.current.intensity
                 : 0;
-              const lerpSpeed = isCurrentViseme ? 0.3 : 0.15; // Faster attack, slower decay
-
+              const lerpSpeed = 0.5; // Faster lerp speed for snappier mouth
               headRef.current.morphTargetInfluences[index] =
                 THREE.MathUtils.lerp(
                   headRef.current.morphTargetInfluences[index],
@@ -214,7 +147,6 @@ export function Avatar(props) {
             }
           }
         });
-
         Object.keys(teethMorphTargets).forEach((key) => {
           if (key.startsWith("viseme_")) {
             const index = teethMorphTargets[key];
@@ -222,9 +154,8 @@ export function Avatar(props) {
               const isCurrentViseme = key === currentVisemeData.current.viseme;
               const targetValue = isCurrentViseme
                 ? currentVisemeData.current.intensity * 0.8
-                : 0; // Teeth less pronounced
-              const lerpSpeed = isCurrentViseme ? 0.3 : 0.15;
-
+                : 0;
+              const lerpSpeed = 0.5;
               teethRef.current.morphTargetInfluences[index] =
                 THREE.MathUtils.lerp(
                   teethRef.current.morphTargetInfluences[index],
@@ -234,8 +165,7 @@ export function Avatar(props) {
             }
           }
         });
-
-        // Add subtle breathing animation when not speaking
+        // Subtle breathing when not speaking
         if (currentVisemeData.current.viseme === "viseme_sil" && !speak) {
           const breathingIntensity = Math.sin(Date.now() * 0.001) * 0.02 + 0.02;
           if (headMorphTargets["viseme_aa"]) {
