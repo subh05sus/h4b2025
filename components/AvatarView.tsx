@@ -3,12 +3,20 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import Experience from "../components/Experience";
 import { Fullscreen, Volume1, X } from "lucide-react";
+import { useSocket } from "@/hooks/useSocket";
+import MessageDialog from "@/components/MessageDialog";
 
 function AvatarView() {
   const [text, setText] = useState("");
   const [speak, setSpeak] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showMessageDialog, setShowMessageDialog] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Socket integration
+  const { socket, isConnected, messages, currentMessage, clearMessages } =
+    useSocket();
+
   const height = useMemo(() => {
     if (typeof window === "undefined") return "100%";
     const width = window.innerWidth;
@@ -29,7 +37,6 @@ function AvatarView() {
       document.exitFullscreen?.().then(() => setIsFullScreen(false));
     }
   };
-
   useEffect(() => {
     const handleFullScreenChange = () => {
       setIsFullScreen(!!document.fullscreenElement);
@@ -39,6 +46,15 @@ function AvatarView() {
     return () =>
       document.removeEventListener("fullscreenchange", handleFullScreenChange);
   }, []);
+
+  // Handle AVATAR_TALK messages for speech
+  useEffect(() => {
+    if (currentMessage && currentMessage.type === "AVATAR_TALK") {
+      setText(currentMessage.text);
+      setSpeak(true);
+      setShowMessageDialog(true);
+    }
+  }, [currentMessage]);
   return (
     <div
       style={{
@@ -170,10 +186,17 @@ function AvatarView() {
             }
           >
             <Volume1 size={20} style={{ marginRight: "8px" }} />
-            Speak
+            Speak{" "}
           </button>
         </div>
       )}
+      {/* Message Dialog */}
+      <MessageDialog
+        currentMessage={currentMessage}
+        messages={messages}
+        isVisible={showMessageDialog}
+        onClose={() => setShowMessageDialog(false)}
+      />
     </div>
   );
 }

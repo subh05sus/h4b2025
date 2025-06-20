@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "socket-server": "node test-socket-server.js"
   },
   "dependencies": {
     "@react-three/drei": "^9.122.0",
@@ -17,6 +18,8 @@
     "next": "15.3.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.3.1",
     "three": "^0.167.1",
     "three-stdlib": "^2.36.0"
