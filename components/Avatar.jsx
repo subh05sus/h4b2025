@@ -33,12 +33,12 @@ export function Avatar(props) {
   const audioDataRef = useRef(null);
 
   // Load idle animation (you can add this file to public/animations/)
-  // const { animations: idleAnimation } = useFBX("/animations/Idle.fbx");
-  // if (idleAnimation.length > 0) {
-  //   idleAnimation[0].name = "Idle";
-  // }
+  const { animations: idleAnimation } = useFBX("/animations/Idle.fbx");
+  if (idleAnimation.length > 0) {
+    idleAnimation[0].name = "Idle";
+  }
 
-  // const { actions } = useAnimations([...(idleAnimation || [])], nodes.Hips);
+  const { actions } = useAnimations([...(idleAnimation || [])], nodes.Hips);
 
   // Enhanced Text-to-Speech with proper viseme timing
   useEffect(() => {

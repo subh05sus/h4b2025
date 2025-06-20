@@ -10,11 +10,11 @@ function AvatarView() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const height = useMemo(() => {
-    if (typeof window === 'undefined') return '400px';
+    if (typeof window === "undefined") return "100%";
     const width = window.innerWidth;
     const height = window.innerHeight;
-    return isFullScreen 
-      ? '100vh'
+    return isFullScreen
+      ? "100vh"
       : width < 768
       ? `${Math.round(height * 0.7)}px`
       : `${Math.round(height * 0.75)}px`;
@@ -51,7 +51,9 @@ function AvatarView() {
         overflow: "hidden",
         position: "relative",
       }}
-    >      <div
+    >
+      {" "}
+      <div
         ref={containerRef}
         style={{
           position: isFullScreen ? "fixed" : "relative",
@@ -110,7 +112,6 @@ function AvatarView() {
           <Experience speakingText={text} speak={speak} setSpeak={setSpeak} />
         </Canvas>
       </div>
-
       {!isFullScreen && (
         <div
           style={{
