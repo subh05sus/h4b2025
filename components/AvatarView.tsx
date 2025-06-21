@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import Experience from "../components/Experience";
-import { Fullscreen, Volume1, X } from "lucide-react";
+import { Fullscreen, X } from "lucide-react";
 import { useSocket } from "@/hooks/useSocket";
 import MessageDialog from "@/components/MessageDialog";
 
@@ -16,16 +16,9 @@ function AvatarView() {
   // Socket integration
   const { socket, isConnected, messages, currentMessage, clearMessages } =
     useSocket();
-
   const height = useMemo(() => {
     if (typeof window === "undefined") return "100%";
-    const width = window.innerWidth;
-    const height = window.innerHeight;
-    return isFullScreen
-      ? "100vh"
-      : width < 768
-      ? `${Math.round(height * 0.7)}px`
-      : `${Math.round(height * 0.75)}px`;
+    return isFullScreen ? "100vh" : "100vh";
   }, [isFullScreen]);
   const toggleFullScreen = () => {
     if (!document.fullscreenElement) {
@@ -61,9 +54,6 @@ function AvatarView() {
         height: "100vh",
         width: "100vw",
         backgroundColor: "#1a1a1a",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
         overflow: "hidden",
         position: "relative",
       }}
@@ -126,70 +116,8 @@ function AvatarView() {
           }}
         >
           <Experience speakingText={text} speak={speak} setSpeak={setSpeak} />
-        </Canvas>
+        </Canvas>{" "}
       </div>
-      {!isFullScreen && (
-        <div
-          style={{
-            width: "100%",
-            height: "20vh",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "10px 20px",
-            backgroundColor: "rgba(45, 45, 45, 0.9)",
-            boxSizing: "border-box",
-          }}
-        >
-          <textarea
-            rows={4}
-            value={text}
-            placeholder="Type something..."
-            style={{
-              padding: "10px",
-              width: "70%",
-              borderRadius: "10px",
-              border: "1px solid #555",
-              resize: "none",
-              fontSize: "16px",
-              backgroundColor: "#1e1e1e",
-              color: "#fff",
-              boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-              boxSizing: "border-box",
-            }}
-            onChange={(e) => setText(e.target.value)}
-          />
-          <button
-            onClick={() => {
-              setSpeak(true);
-            }}
-            style={{
-              marginLeft: "10px",
-              padding: "10px 20px",
-              backgroundColor: "#4CAF50",
-              color: "white",
-              border: "none",
-              borderRadius: "10px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "background-color 0.3s ease",
-            }}
-            onMouseEnter={(e) =>
-              ((e.target as HTMLButtonElement).style.backgroundColor =
-                "#45a049")
-            }
-            onMouseLeave={(e) =>
-              ((e.target as HTMLButtonElement).style.backgroundColor =
-                "#4CAF50")
-            }
-          >
-            <Volume1 size={20} style={{ marginRight: "8px" }} />
-            Speak{" "}
-          </button>
-        </div>
-      )}
       {/* Message Dialog */}
       <MessageDialog
         currentMessage={currentMessage}
