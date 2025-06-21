@@ -41,9 +41,9 @@ function AvatarView() {
       if (finalTranscript.trim()) {
         console.log("Sending speech to server:", finalTranscript);
         // Add speech message to dialog
+        sendSpeechData(finalTranscript.trim());
         addSpeechMessage(finalTranscript.trim());
         // Send to socket server
-        sendSpeechData(finalTranscript.trim());
         resetTranscript();
       }
     },
