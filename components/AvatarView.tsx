@@ -13,10 +13,18 @@ function AvatarView() {
   const [speak, setSpeak] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showMessageDialog, setShowMessageDialog] = useState(true);
-  const containerRef = useRef<HTMLDivElement>(null);
-  // Socket integration
-  const { socket, isConnected, messages, currentMessage, clearMessages, sendSpeechData } =
-    useSocket();
+  const containerRef = useRef<HTMLDivElement>(null); // Socket integration
+  const {
+    socket,
+    isConnected,
+    messages,
+    currentMessage,
+    isAvatarSpeaking,
+    clearMessages,
+    sendSpeechData,
+    addSpeechMessage,
+    setAvatarSpeaking,
+  } = useSocket();
   // Speech recognition integration
   const {
     transcript,
@@ -31,12 +39,16 @@ function AvatarView() {
     (finalTranscript) => {
       // Send speech data to server when speech is completed
       if (finalTranscript.trim()) {
-        console.log('Sending speech to server:', finalTranscript);
+        console.log("Sending speech to server:", finalTranscript);
+        // Add speech message to dialog
+        addSpeechMessage(finalTranscript.trim());
+        // Send to socket server
         sendSpeechData(finalTranscript.trim());
         resetTranscript();
       }
     },
-    true // continuous listening
+    true, // continuous listening
+    speak // pause when avatar is speaking
   );
 
   const toggleMicrophone = () => {
@@ -145,15 +157,22 @@ function AvatarView() {
             transition: "all 0.3s ease",
           }}
         >
-          <Experience speakingText={text} speak={speak} setSpeak={setSpeak} />
+          <Experience
+            speakingText={text}
+            speak={speak}
+            setSpeak={setSpeak}
+            setAvatarSpeaking={setAvatarSpeaking}
+          />
         </Canvas>{" "}
-      </div>      {/* Message Dialog */}
+      </div>{" "}
+      {/* Message Dialog */}
       <MessageDialog
         currentMessage={currentMessage}
         messages={messages}
         isVisible={showMessageDialog}
         onClose={() => setShowMessageDialog(false)}
-      />      {/* Microphone Button */}
+      />{" "}
+      {/* Microphone Button */}
       <MicrophoneButton
         isListening={isListening}
         isSpeaking={isSpeaking}

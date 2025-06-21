@@ -13,8 +13,11 @@ export interface UseSocketReturn {
   isConnected: boolean;
   messages: SocketMessage[];
   currentMessage: SocketMessage | null;
+  isAvatarSpeaking: boolean;
   clearMessages: () => void;
   sendSpeechData: (text: string) => void;
+  addSpeechMessage: (text: string) => void;
+  setAvatarSpeaking: (speaking: boolean) => void;
 }
 
 export const useSocket = (
@@ -26,24 +29,39 @@ export const useSocket = (
   const [currentMessage, setCurrentMessage] = useState<SocketMessage | null>(
     null
   );
+  const [isAvatarSpeaking, setIsAvatarSpeaking] = useState<boolean>(false);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const clearMessages = useCallback(() => {
     setMessages([]);
     setCurrentMessage(null);
   }, []);
+  const sendSpeechData = useCallback(
+    (text: string) => {
+      if (socket && isConnected) {
+        console.log("Sending speech data:", text);
+        socket.emit("message", {
+          type: "DATA_IN",
+          text: text,
+          timestamp: Date.now(),
+        });
+      } else {
+        console.warn("Cannot send speech data: socket not connected");
+      }
+    },
+    [socket, isConnected]
+  );
 
-  const sendSpeechData = useCallback((text: string) => {
-    if (socket && isConnected) {
-      console.log('Sending speech data:', text);
-      socket.emit('message', {
-        type: 'DATA_IN',
-        text: text,
-        timestamp: Date.now()
-      });
-    } else {
-      console.warn('Cannot send speech data: socket not connected');
-    }
-  }, [socket, isConnected]);
+  const addSpeechMessage = useCallback((text: string) => {
+    const speechMessage: SocketMessage = {
+      id: Math.random().toString(36).substr(2, 9),
+      type: "USER_SPEECH",
+      text: text,
+      timestamp: Date.now(),
+    };
+
+    setMessages((prev) => [...prev, speechMessage]);
+    console.log("Added speech message to dialog:", text);
+  }, []);
 
   useEffect(() => {
     const socketInstance = io(serverUrl, {
@@ -122,7 +140,10 @@ export const useSocket = (
     isConnected,
     messages,
     currentMessage,
+    isAvatarSpeaking,
     clearMessages,
     sendSpeechData,
+    addSpeechMessage,
+    setAvatarSpeaking: setIsAvatarSpeaking,
   };
 };

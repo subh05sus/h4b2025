@@ -1,7 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { SocketMessage } from "@/hooks/useSocket";
-import { MessageCircle, X, History, Minimize2, Maximize2 } from "lucide-react";
+import {
+  MessageCircle,
+  X,
+  History,
+  Minimize2,
+  Maximize2,
+  Mic,
+  Bot,
+} from "lucide-react";
 
 interface MessageDialogProps {
   currentMessage: SocketMessage | null;
@@ -40,12 +48,25 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
     switch (type) {
       case "AVATAR_TALK":
         return "text-emerald-400";
+      case "USER_SPEECH":
+        return "text-blue-400";
       case "ERROR":
         return "text-red-400";
       case "WARNING":
         return "text-amber-400";
       default:
-        return "text-blue-400";
+        return "text-gray-400";
+    }
+  };
+
+  const getMessageIcon = (type: string) => {
+    switch (type) {
+      case "AVATAR_TALK":
+        return <Bot className="w-4 h-4" />;
+      case "USER_SPEECH":
+        return <Mic className="w-4 h-4" />;
+      default:
+        return <MessageCircle className="w-4 h-4" />;
     }
   };
 
@@ -129,16 +150,31 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
                     .map((message) => (
                       <div
                         key={message.id}
-                        className="bg-gray-900/30 rounded-lg p-3 border border-gray-700/30 hover:bg-gray-800/40 transition-colors duration-200"
+                        className={`rounded-lg p-3 border transition-colors duration-200 ${
+                          message.type === "USER_SPEECH"
+                            ? "bg-blue-900/20 border-blue-700/30 hover:bg-blue-800/30"
+                            : message.type === "AVATAR_TALK"
+                            ? "bg-emerald-900/20 border-emerald-700/30 hover:bg-emerald-800/30"
+                            : "bg-gray-900/30 border-gray-700/30 hover:bg-gray-800/40"
+                        }`}
                       >
                         <div className="flex items-center justify-between mb-2">
-                          <span
-                            className={`text-sm font-medium ${getMessageTypeColor(
-                              message.type
-                            )}`}
-                          >
-                            {message.type}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`${getMessageTypeColor(message.type)}`}
+                            >
+                              {getMessageIcon(message.type)}
+                            </span>
+                            <span
+                              className={`text-sm font-medium ${getMessageTypeColor(
+                                message.type
+                              )}`}
+                            >
+                              {message.type === "USER_SPEECH"
+                                ? "You said"
+                                : message.type}
+                            </span>
+                          </div>
                           <span className="text-gray-500 text-xs">
                             {formatTime(message.timestamp)}
                           </span>
@@ -153,24 +189,35 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
             ) : (
               /* Current Message View */
               <div>
+                {" "}
                 {currentMessage ? (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span
-                        className={`text-sm font-medium ${getMessageTypeColor(
-                          currentMessage.type
-                        )}`}
-                      >
-                        {currentMessage.type}
-                      </span>{" "}
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`${getMessageTypeColor(
+                            currentMessage.type
+                          )}`}
+                        >
+                          {getMessageIcon(currentMessage.type)}
+                        </span>
+                        <span
+                          className={`text-sm font-medium ${getMessageTypeColor(
+                            currentMessage.type
+                          )}`}
+                        >
+                          {currentMessage.type === "USER_SPEECH"
+                            ? "You said"
+                            : currentMessage.type}
+                        </span>
+                      </div>
                       <span className="text-gray-500 text-xs">
                         {formatTime(currentMessage.timestamp)}
                       </span>
                     </div>
                     <p className="text-gray-200 leading-relaxed">
                       {currentMessage.text}
-                    </p>
-
+                    </p>{" "}
                     {/* Animated speaking indicator for AVATAR_TALK */}
                     {currentMessage.type === "AVATAR_TALK" && (
                       <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-700/40">
@@ -190,6 +237,28 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
                         </div>
                         <span className="text-emerald-300 text-sm">
                           Avatar is speaking...
+                        </span>
+                      </div>
+                    )}
+                    {/* Speech input indicator for USER_SPEECH */}
+                    {currentMessage.type === "USER_SPEECH" && (
+                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-700/40">
+                        <div className="flex gap-1">
+                          <div
+                            className="w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50"
+                            style={{ animationDelay: "0ms" }}
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50"
+                            style={{ animationDelay: "100ms" }}
+                          ></div>
+                          <div
+                            className="w-2 h-2 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50"
+                            style={{ animationDelay: "200ms" }}
+                          ></div>
+                        </div>
+                        <span className="text-blue-300 text-sm">
+                          Speech recognized
                         </span>
                       </div>
                     )}

@@ -12,7 +12,7 @@ import {
 import * as THREE from "three";
 
 export function Avatar(props) {
-  const { text, speak, setSpeak } = props;
+  const { text, speak, setSpeak, setAvatarSpeaking } = props;
   const { scene } = useGLTF("/models/674d75af3c0313725248ed0d.glb");
   const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
   const { nodes, materials } = useGraph(clone);
@@ -81,19 +81,27 @@ export function Avatar(props) {
 
       visemeQueue.current = generateVisemeSequence(text);
       visemeStartTime.current = Date.now();
-
       utterance.onstart = () => {
         visemeStartTime.current = Date.now();
+        if (setAvatarSpeaking) {
+          setAvatarSpeaking(true);
+        }
       };
       utterance.onend = () => {
         currentVisemeData.current = { viseme: "viseme_sil", intensity: 0 };
         visemeQueue.current = [];
         setSpeak(false);
+        if (setAvatarSpeaking) {
+          setAvatarSpeaking(false);
+        }
       };
       utterance.onerror = () => {
         currentVisemeData.current = { viseme: "viseme_sil", intensity: 0 };
         visemeQueue.current = [];
         setSpeak(false);
+        if (setAvatarSpeaking) {
+          setAvatarSpeaking(false);
+        }
       };
       speechSynthesis.speak(utterance);
     }
