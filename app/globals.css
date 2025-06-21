@@ -120,3 +120,70 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+}
+
+@layer components {
+  /* Speech recognition microphone animations */
+  @keyframes voice-wave {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(1.5); }
+  }
+  
+  .voice-wave {
+    animation: voice-wave 0.5s ease-in-out infinite;
+  }
+  
+  .voice-wave:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+  
+  .voice-wave:nth-child(3) {
+    animation-delay: 0.2s;
+  }
+  
+  /* Microphone pulse effect */
+  @keyframes mic-pulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(var(--destructive), 0.4);
+    }
+    70% {
+      box-shadow: 0 0 0 10px rgba(var(--destructive), 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(var(--destructive), 0);
+    }
+  }
+  
+  .mic-pulse {
+    animation: mic-pulse 2s infinite;
+  }
+  
+  /* Smooth slide in animations */
+  @keyframes slide-in-from-bottom {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animate-slide-in {
+    animation: slide-in-from-bottom 0.3s ease-out;
+  }
+}

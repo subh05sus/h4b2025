@@ -14,6 +14,7 @@ export interface UseSocketReturn {
   messages: SocketMessage[];
   currentMessage: SocketMessage | null;
   clearMessages: () => void;
+  sendSpeechData: (text: string) => void;
 }
 
 export const useSocket = (
@@ -26,11 +27,23 @@ export const useSocket = (
     null
   );
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   const clearMessages = useCallback(() => {
     setMessages([]);
     setCurrentMessage(null);
   }, []);
+
+  const sendSpeechData = useCallback((text: string) => {
+    if (socket && isConnected) {
+      console.log('Sending speech data:', text);
+      socket.emit('message', {
+        type: 'DATA_IN',
+        text: text,
+        timestamp: Date.now()
+      });
+    } else {
+      console.warn('Cannot send speech data: socket not connected');
+    }
+  }, [socket, isConnected]);
 
   useEffect(() => {
     const socketInstance = io(serverUrl, {
@@ -104,12 +117,12 @@ export const useSocket = (
       socketInstance.disconnect();
     };
   }, [serverUrl]);
-
   return {
     socket,
     isConnected,
     messages,
     currentMessage,
     clearMessages,
+    sendSpeechData,
   };
 };

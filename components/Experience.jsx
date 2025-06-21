@@ -12,7 +12,7 @@ const Experience = ({ speakingText, speak, setSpeak }) => {
     <>
       {/* <OrbitControls /> */}{" "}
       {/** OrbitControls is Allows the user to control the camera with the mouse or touch */}
-      <color attach="background" args={["#1a1a1a"]} />
+      <color attach="background" args={["#000000"]} />
       <Avatar
         position={[0, -5, 5]}
         scale={3}

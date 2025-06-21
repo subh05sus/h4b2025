@@ -36,17 +36,16 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
       second: "2-digit",
     });
   };
-
   const getMessageTypeColor = (type: string) => {
     switch (type) {
       case "AVATAR_TALK":
-        return "text-green-300";
+        return "text-emerald-400";
       case "ERROR":
-        return "text-red-300";
+        return "text-red-400";
       case "WARNING":
-        return "text-yellow-300";
+        return "text-amber-400";
       default:
-        return "text-blue-300";
+        return "text-blue-400";
     }
   };
 
@@ -60,26 +59,28 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
         width: showHistory ? "600px" : "450px",
       }}
     >
-      {/* Glass morphism container */}
+      {" "}
+      {/* Dark Glass morphism container */}
       <div
-        className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl shadow-2xl"
+        className="backdrop-blur-xl bg-zinc-900/50 border border-gray-700/30 rounded-2xl shadow-2xl"
         style={{
-          background: "rgba(255, 255, 255, 0.05)",
-          backdropFilter: "blur(20px)",
-          WebkitBackdropFilter: "blur(20px)",
+          background: "rgba(15, 15, 15, 0.5)",
+          backdropFilter: "blur(24px)",
+          WebkitBackdropFilter: "blur(24px)",
           boxShadow:
-            "0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)",
+            "0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
         }}
       >
+        {" "}
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-white/20">
+        <div className="flex items-center justify-between p-4 border-b border-gray-700/40">
           <div className="flex items-center gap-2">
-            <MessageCircle className="w-5 h-5 text-white/80" />
-            <span className="text-white/90 font-medium">
+            <MessageCircle className="w-5 h-5 text-gray-200" />
+            <span className="text-gray-100 font-medium">
               {showHistory ? "Message History" : "Avatar Messages"}
             </span>
             {messages.length > 0 && (
-              <span className="bg-white/20 text-white/80 text-xs px-2 py-1 rounded-full">
+              <span className="bg-gray-800/60 text-gray-200 text-xs px-2 py-1 rounded-full border border-gray-600/30">
                 {messages.length}
               </span>
             )}
@@ -87,40 +88,38 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowHistory(!showHistory)}
-              className="p-1.5 hover:bg-white/20 rounded-lg transition-colors duration-200"
+              className="p-1.5 hover:bg-gray-800/50 rounded-lg transition-all duration-200 hover:scale-105"
               title={showHistory ? "Show Current" : "Show History"}
             >
-              <History className="w-4 h-4 text-white/70" />
+              <History className="w-4 h-4 text-gray-300 hover:text-gray-100" />
             </button>
             <button
               onClick={() => setIsMinimized(!isMinimized)}
-              className="p-1.5 hover:bg-white/20 rounded-lg transition-colors duration-200"
+              className="p-1.5 hover:bg-gray-800/50 rounded-lg transition-all duration-200 hover:scale-105"
               title={isMinimized ? "Maximize" : "Minimize"}
             >
               {isMinimized ? (
-                <Maximize2 className="w-4 h-4 text-white/70" />
+                <Maximize2 className="w-4 h-4 text-gray-300 hover:text-gray-100" />
               ) : (
-                <Minimize2 className="w-4 h-4 text-white/70" />
+                <Minimize2 className="w-4 h-4 text-gray-300 hover:text-gray-100" />
               )}
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 hover:bg-white/20 rounded-lg transition-colors duration-200"
+              className="p-1.5 hover:bg-red-900/30 rounded-lg transition-all duration-200 hover:scale-105"
               title="Close"
             >
-              <X className="w-4 h-4 text-white/70" />
+              <X className="w-4 h-4 text-gray-300 hover:text-red-300" />
             </button>
           </div>
         </div>
-
         {/* Content */}
         {!isMinimized && (
           <div className="p-4">
             {showHistory ? (
-              /* History View */
-              <div className="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">
+              /* History View */ <div className="space-y-3 max-h-60 overflow-y-auto custom-scrollbar">
                 {messages.length === 0 ? (
-                  <div className="text-white/60 text-center py-4">
+                  <div className="text-gray-400 text-center py-4">
                     No messages yet
                   </div>
                 ) : (
@@ -130,7 +129,7 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
                     .map((message) => (
                       <div
                         key={message.id}
-                        className="bg-white/5 rounded-lg p-3 border border-white/10"
+                        className="bg-gray-900/30 rounded-lg p-3 border border-gray-700/30 hover:bg-gray-800/40 transition-colors duration-200"
                       >
                         <div className="flex items-center justify-between mb-2">
                           <span
@@ -140,11 +139,11 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
                           >
                             {message.type}
                           </span>
-                          <span className="text-white/50 text-xs">
+                          <span className="text-gray-500 text-xs">
                             {formatTime(message.timestamp)}
                           </span>
                         </div>
-                        <p className="text-white/90 text-sm leading-relaxed">
+                        <p className="text-gray-200 text-sm leading-relaxed">
                           {message.text}
                         </p>
                       </div>
@@ -163,40 +162,40 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
                         )}`}
                       >
                         {currentMessage.type}
-                      </span>
-                      <span className="text-white/50 text-xs">
+                      </span>{" "}
+                      <span className="text-gray-500 text-xs">
                         {formatTime(currentMessage.timestamp)}
                       </span>
                     </div>
-                    <p className="text-white/90 leading-relaxed">
+                    <p className="text-gray-200 leading-relaxed">
                       {currentMessage.text}
                     </p>
 
                     {/* Animated speaking indicator for AVATAR_TALK */}
                     {currentMessage.type === "AVATAR_TALK" && (
-                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-white/20">
+                      <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-700/40">
                         <div className="flex gap-1">
                           <div
-                            className="w-2 h-2 bg-green-400 rounded-full animate-bounce"
+                            className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce shadow-lg shadow-emerald-400/50"
                             style={{ animationDelay: "0ms" }}
                           ></div>
                           <div
-                            className="w-2 h-2 bg-green-400 rounded-full animate-bounce"
+                            className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce shadow-lg shadow-emerald-400/50"
                             style={{ animationDelay: "150ms" }}
                           ></div>
                           <div
-                            className="w-2 h-2 bg-green-400 rounded-full animate-bounce"
+                            className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce shadow-lg shadow-emerald-400/50"
                             style={{ animationDelay: "300ms" }}
                           ></div>
                         </div>
-                        <span className="text-green-300 text-sm">
+                        <span className="text-emerald-300 text-sm">
                           Avatar is speaking...
                         </span>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="text-white/60 text-center py-4">
+                  <div className="text-gray-400 text-center py-4">
                     Waiting for messages...
                   </div>
                 )}
@@ -204,33 +203,31 @@ const MessageDialog: React.FC<MessageDialogProps> = ({
             )}
           </div>
         )}
-      </div>
-
+      </div>{" "}
       {/* Connection indicator */}
       <div className="flex justify-center mt-2">
-        <div className="flex items-center gap-2 bg-white/5 backdrop-blur-sm rounded-full px-3 py-1 border border-white/10">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-          <span className="text-white/70 text-xs">Socket Connected</span>
+        <div className="flex items-center gap-2 bg-gray-900/40 backdrop-blur-sm rounded-full px-3 py-1 border border-gray-700/30">
+          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50"></div>
+          <span className="text-gray-300 text-xs">Socket Connected</span>
         </div>
-      </div>
-
+      </div>{" "}
       <style jsx>{`
         .custom-scrollbar::-webkit-scrollbar {
           width: 6px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-track {
-          background: rgba(255, 255, 255, 0.1);
+          background: rgba(55, 65, 81, 0.3);
           border-radius: 3px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(255, 255, 255, 0.3);
+          background: rgba(107, 114, 128, 0.6);
           border-radius: 3px;
         }
 
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: rgba(255, 255, 255, 0.5);
+          background: rgba(156, 163, 175, 0.8);
         }
       `}</style>
     </div>

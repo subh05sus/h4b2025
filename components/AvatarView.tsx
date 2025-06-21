@@ -4,7 +4,9 @@ import { Canvas } from "@react-three/fiber";
 import Experience from "../components/Experience";
 import { Fullscreen, X } from "lucide-react";
 import { useSocket } from "@/hooks/useSocket";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import MessageDialog from "@/components/MessageDialog";
+import MicrophoneButton from "@/components/MicrophoneButton";
 
 function AvatarView() {
   const [text, setText] = useState("");
@@ -12,10 +14,38 @@ function AvatarView() {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showMessageDialog, setShowMessageDialog] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
-
   // Socket integration
-  const { socket, isConnected, messages, currentMessage, clearMessages } =
+  const { socket, isConnected, messages, currentMessage, clearMessages, sendSpeechData } =
     useSocket();
+  // Speech recognition integration
+  const {
+    transcript,
+    isListening,
+    isSpeaking,
+    confidence,
+    isSupported: isSpeechSupported,
+    startListening,
+    stopListening,
+    resetTranscript,
+  } = useSpeechRecognition(
+    (finalTranscript) => {
+      // Send speech data to server when speech is completed
+      if (finalTranscript.trim()) {
+        console.log('Sending speech to server:', finalTranscript);
+        sendSpeechData(finalTranscript.trim());
+        resetTranscript();
+      }
+    },
+    true // continuous listening
+  );
+
+  const toggleMicrophone = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
   const height = useMemo(() => {
     if (typeof window === "undefined") return "100%";
     return isFullScreen ? "100vh" : "100vh";
@@ -53,7 +83,7 @@ function AvatarView() {
       style={{
         height: "100vh",
         width: "100vw",
-        backgroundColor: "#1a1a1a",
+        backgroundColor: "#111111",
         overflow: "hidden",
         position: "relative",
       }}
@@ -68,7 +98,7 @@ function AvatarView() {
           width: isFullScreen ? "100vw" : "100%",
           height: isFullScreen ? "100vh" : height,
           transition: "all 0.3s ease",
-          backgroundColor: "#1a1a1a",
+          backgroundColor: "#111111",
           borderRadius: isFullScreen ? "0" : "15px",
           overflow: "hidden",
           boxShadow: isFullScreen ? "none" : "0 8px 32px rgba(0, 0, 0, 0.3)",
@@ -117,13 +147,20 @@ function AvatarView() {
         >
           <Experience speakingText={text} speak={speak} setSpeak={setSpeak} />
         </Canvas>{" "}
-      </div>
-      {/* Message Dialog */}
+      </div>      {/* Message Dialog */}
       <MessageDialog
         currentMessage={currentMessage}
         messages={messages}
         isVisible={showMessageDialog}
         onClose={() => setShowMessageDialog(false)}
+      />      {/* Microphone Button */}
+      <MicrophoneButton
+        isListening={isListening}
+        isSpeaking={isSpeaking}
+        confidence={confidence}
+        isSupported={isSpeechSupported}
+        onClick={toggleMicrophone}
+        transcript={transcript}
       />
     </div>
   );
