@@ -5,6 +5,5 @@ export default function Home() {
   return (
     <div className="">
       <AvatarView />
-      <h1>Hello World</h1>
     </div>
   );}

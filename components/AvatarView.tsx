@@ -4,6 +4,7 @@ import { Canvas } from "@react-three/fiber";
 import Experience from "../components/Experience";
 import { Fullscreen, X } from "lucide-react";
 import { useSocket } from "@/hooks/useSocket";
+import { useSocket3002 } from "@/hooks/useSocket";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import MessageDialog from "@/components/MessageDialog";
 import MicrophoneButton from "@/components/MicrophoneButton";
@@ -25,6 +26,14 @@ function AvatarView() {
     addSpeechMessage,
     setAvatarSpeaking,
   } = useSocket();
+  const {
+    socket: socket3002,
+    isConnected: isConnected3002,
+    messages: messages3002,
+    currentMessage: currentMessage3002,
+    clearMessages: clearMessages3002,
+    sendSpeechData: sendSpeechData3002,
+  } = useSocket3002();
   // Speech recognition integration
   const {
     transcript,
@@ -186,3 +195,5 @@ function AvatarView() {
 }
 
 export default AvatarView;
+
+// This is a comment

@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import { Mic, MicOff, Volume2 } from 'lucide-react';
+import React from "react";
+import { Mic, MicOff, Volume2 } from "lucide-react";
 
 interface MicrophoneButtonProps {
   isListening: boolean;
@@ -21,7 +21,7 @@ const MicrophoneButton: React.FC<MicrophoneButtonProps> = ({
 }) => {
   if (!isSupported) {
     return (
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center">
+      <div className="fixed bottom-10 right-10 z-50 flex flex-col items-center">
         <div className="bg-muted/80 backdrop-blur-sm text-muted-foreground p-4 rounded-full shadow-lg border border-border/50">
           <MicOff size={24} />
         </div>
@@ -33,9 +33,10 @@ const MicrophoneButton: React.FC<MicrophoneButtonProps> = ({
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end max-w-sm">      {/* Transcript Display */}
+    <div className="fixed top-2 right-2 z-50 flex flex-col items-end max-w-sm">
+      {/* Transcript Display */}
       {transcript && (
-        <div className="mb-4 max-w-xs bg-card/95 backdrop-blur-md text-card-foreground p-4 rounded-xl shadow-xl border border-border/50 animate-slide-in">
+        <div className="fixed top-10 right-10 max-w-xs bg-card/95 backdrop-blur-md text-card-foreground p-4 rounded-xl shadow-xl border border-border/50 animate-slide-in z-50">
           <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
             <Volume2 size={14} />
             <span>You're saying:</span>
@@ -48,11 +49,13 @@ const MicrophoneButton: React.FC<MicrophoneButtonProps> = ({
               </div>
             )}
           </div>
-          <div className="text-sm leading-relaxed font-medium">{transcript}</div>
+          <div className="text-sm leading-relaxed font-medium">
+            {transcript}
+          </div>
           <div className="mt-3 flex items-center gap-2">
             <div className="flex-1 h-1 bg-muted rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gradient-to-r from-primary to-primary/60 rounded-full transition-all duration-300" 
+              <div
+                className="h-full bg-gradient-to-r from-primary to-primary/60 rounded-full transition-all duration-300"
                 style={{ width: `${Math.min(transcript.length * 2, 100)}%` }}
               ></div>
             </div>
@@ -64,16 +67,17 @@ const MicrophoneButton: React.FC<MicrophoneButtonProps> = ({
           </div>
         </div>
       )}
-        {/* Microphone Button */}
+      {/* Microphone Button */}
       <div className="relative">
         <button
           onClick={onClick}
           className={`
             group relative p-4 rounded-full shadow-xl transition-all duration-300 transform hover:scale-105 active:scale-95
             border backdrop-blur-sm overflow-hidden
-            ${isListening 
-              ? 'bg-destructive/90 hover:bg-destructive border-destructive/50 text-destructive-foreground mic-pulse' 
-              : 'bg-primary/90 hover:bg-primary border-primary/50 text-primary-foreground hover:shadow-primary/25'
+            ${
+              isListening
+                ? "bg-destructive/90 hover:bg-destructive border-destructive/50 text-destructive-foreground mic-pulse"
+                : "bg-primary/90 hover:bg-primary border-primary/50 text-primary-foreground hover:shadow-primary/25"
             }
           `}
           title={isListening ? "Stop listening" : "Start listening"}
@@ -82,7 +86,7 @@ const MicrophoneButton: React.FC<MicrophoneButtonProps> = ({
           {isListening && (
             <div className="absolute inset-0 bg-gradient-to-r from-destructive/20 via-destructive/30 to-destructive/20 animate-pulse"></div>
           )}
-          
+
           {/* Pulsing rings when listening */}
           {isListening && (
             <>
@@ -91,10 +95,10 @@ const MicrophoneButton: React.FC<MicrophoneButtonProps> = ({
               <div className="absolute inset-0 rounded-full bg-destructive/10 animate-ping animation-delay-200"></div>
             </>
           )}
-          
+
           {/* Hover effect ring */}
           <div className="absolute inset-0 rounded-full bg-current opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
-          
+
           <div className="relative z-10 transition-all duration-200 group-hover:scale-110">
             {isListening ? (
               <div className="relative">
@@ -107,14 +111,20 @@ const MicrophoneButton: React.FC<MicrophoneButtonProps> = ({
             )}
           </div>
         </button>
-        
+
         {/* Status indicator dot */}
-        <div className={`
+        <div
+          className={`
           absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-background transition-all duration-300
-          ${isListening ? 'bg-destructive animate-pulse shadow-lg shadow-destructive/50' : 'bg-muted-foreground'}
-        `}></div>
+          ${
+            isListening
+              ? "bg-destructive animate-pulse shadow-lg shadow-destructive/50"
+              : "bg-muted-foreground"
+          }
+        `}
+        ></div>
       </div>
-        {/* Status Text */}
+      {/* Status Text */}
       <div className="text-xs text-muted-foreground text-center mt-3 bg-card/80 backdrop-blur-sm px-3 py-1.5 rounded-full border border-border/30 transition-all duration-200">
         {isListening ? (
           <span className="flex items-center gap-1.5 justify-center">
