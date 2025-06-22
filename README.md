@@ -1,36 +1,108 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🤖 Cypher AI – Your Emotion-Aware Coding Companion
 
-## Getting Started
+> “Not just a coding assistant — a mentor, a holographic friend, and a mindful productivity partner.”
 
-First, run the development server:
+Cypher AI is a next-generation AI-powered companion designed to make the coding experience more human, engaging, and focused. Unlike traditional developer tools that stop at code suggestions, Cypher AI brings real-time emotional awareness, distraction detection, and even physical presence through a holographic avatar — powered by Gemini’s AI.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🧠 Emotion-Aware Feedback
+- Uses Gemini’s AI to detect emotional states via your laptop webcam.
+- Encourages breaks when you're overwhelmed or feeling low.
+- Responds with motivational nudges to improve mental well-being during deep work.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 📵 Distraction Detection
+- Detects real-world distractions like picking up your phone using object recognition.
+- Sends real-time prompts to help you regain focus and build better coding habits.
 
-## Learn More
+### 💬 Intelligent Coding Support
+- Understands live code context just like GitHub Copilot.
+- Provides fixes, feedback, and mentor-style guidance.
+- Can simulate technical interviews by asking context-relevant coding questions.
 
-To learn more about Next.js, take a look at the following resources:
+### 🌈 Holographic Avatar Projection
+- The AI companion is visualized as a hologram using a glass pane and a projector.
+- Brings a physical, lifelike presence to your workspace.
+- Makes the assistant feel like a real companion — not just text on a screen.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🧩 Tech Stack
 
-## Deploy on Vercel
+- 🧠 Gemini’s AI – for emotion + object detection and natural response generation
+- 🧪 Python (Flask) – backend logic and WebSocket communication
+- 💻 Electron – UI and frontend integration
+- 🔍 YOLO (Experimental Phase) – initial object detection testing
+- 🪞 Custom hardware setup – hologram projection with transparent pane + projector
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🔗 Repositories
+
+- 💡 Core Emotion + Object Detection Backend  
+  [h4b-emotion](https://github.com/subh05sus/h4b-emotion)
+
+- 🧠 Central Integration & Logic Flow  
+  [h4b2025](https://github.com/subh05sus/h4b2025)
+
+- 🖥️ Frontend & Electron UI System  
+  [h4b-electron](https://github.com/subh05sus/h4b-electron)
+
+- 🧪 Early Prototypes & R&D Experiments  
+  [Cypher](https://github.com/heysubinoy/Cypher)
+
+---
+
+## 🛠 Challenges We Ran Into
+
+- We experimented with several emotion and object detection models before selecting Gemini’s AI, which gave us the most robust results tailored to our use case.
+- Building a real-time webcam-to-backend pipeline with low latency was technically tricky and required threading, frame optimization, and a lot of testing.
+- Setting up the hologram physically — aligning projections on a glass pane for clarity and realism — was a first-time experience. It was challenging but rewarding once we got it working smoothly.
+- Coordinating different modules under time pressure was difficult, especially when we lost our team leader to… an extended bathroom emergency (yes, real story) due to stomach issues. That momentary manpower dip made things a bit chaotic — but we pulled through together.
+
+---
+
+## 🎯 Why This Matters
+
+Coding today can feel robotic and isolating. Most tools help you write better code — but they don’t check in with how you’re doing, how focused you are, or what you're struggling with emotionally.
+
+Cypher AI is built for:
+- Students coding late into the night.
+- Developers preparing for interviews.
+- Anyone who wants more than a silent tool — a friend, a guide, a voice.
+
+It’s about better code — but also a better coding experience.
+
+---
+
+## 📸 Sneak Peek
+
+> (Add screenshots or hologram setup demo video here)
+
+---
+
+## 🔮 Future Plans
+
+- Add voice-based interactions using speech recognition and TTS.
+- Integrate support for multiple AI “personas” (e.g. strict mentor, chill friend, etc.)
+- Build desktop-first companion apps for students and remote devs.
+- Enable journaling/mood-tracking features alongside code logs.
+
+---
+
+## 👥 Team
+
+Built with caffeine, chaos, and care at Hack4Bengal 2025 ❤️  
+Big love to everyone who stayed up debugging, testing, and re-aligning the hologram pane 42 times.
+
+---
+
+## 📄 License
+
+MIT License – Feel free to fork, remix, improve, and build your own companion.
+
+---
+
+Made with 💡, Gemini’s AI, and a little help from the bathroom-bound team leader.
