@@ -23,6 +23,10 @@ export function Avatar(props) {
   const visemeQueue = useRef([]);
   const visemeStartTime = useRef(0);
   const currentVisemeData = useRef({ viseme: "viseme_sil", intensity: 0 });
+  const animationStateRef = useRef({
+    isTransitioning: false,
+    targetWeight: 0.3,
+  });
 
   // Speech synthesis references
   const utteranceRef = useRef(null);
@@ -39,6 +43,60 @@ export function Avatar(props) {
   }
 
   const { actions } = useAnimations([...(idleAnimation || [])], nodes.Hips);
+
+  // Play idle animation with smooth transitions
+  useEffect(() => {
+    if (actions && actions.Idle) {
+      actions.Idle.reset().fadeIn(2.0).play();
+      actions.Idle.setEffectiveWeight(0.3);
+    }
+    return () => {
+      if (actions && actions.Idle) {
+        actions.Idle.fadeOut(2.0);
+      }
+    };
+  }, [actions]);
+  // Smooth animation transitions based on speaking state
+  useEffect(() => {
+    if (actions && actions.Idle && !animationStateRef.current.isTransitioning) {
+      const targetWeight = speak ? 0.1 : 0.3;
+
+      // Skip transition if we're already at the target weight
+      if (Math.abs(actions.Idle.getEffectiveWeight() - targetWeight) < 0.01) {
+        return;
+      }
+
+      animationStateRef.current.isTransitioning = true;
+      animationStateRef.current.targetWeight = targetWeight;
+
+      const currentWeight = actions.Idle.getEffectiveWeight();
+      const duration = speak ? 0.3 : 0.6; // Faster transition when speaking starts
+
+      const startTime = Date.now();
+      const animate = () => {
+        // Check if we should stop this animation (target changed)
+        if (animationStateRef.current.targetWeight !== targetWeight) {
+          animationStateRef.current.isTransitioning = false;
+          return;
+        }
+
+        const elapsed = (Date.now() - startTime) / 1000;
+        const progress = Math.min(elapsed / duration, 1);
+        const easedProgress = 1 - Math.pow(1 - progress, 3); // Ease out cubic for smoother feel
+        const newWeight =
+          currentWeight + (targetWeight - currentWeight) * easedProgress;
+
+        actions.Idle.setEffectiveWeight(newWeight);
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          animationStateRef.current.isTransitioning = false;
+        }
+      };
+      animate();
+    }
+  }, [speak, actions]);
 
   // Enhanced Text-to-Speech with proper viseme timing
   useEffect(() => {
@@ -145,7 +203,7 @@ export function Avatar(props) {
               const targetValue = isCurrentViseme
                 ? currentVisemeData.current.intensity
                 : 0;
-              const lerpSpeed = 0.5; // Faster lerp speed for snappier mouth
+              const lerpSpeed = 0.1; // Faster lerp speed for snappier mouth
               headRef.current.morphTargetInfluences[index] =
                 THREE.MathUtils.lerp(
                   headRef.current.morphTargetInfluences[index],
@@ -163,7 +221,7 @@ export function Avatar(props) {
               const targetValue = isCurrentViseme
                 ? currentVisemeData.current.intensity * 0.8
                 : 0;
-              const lerpSpeed = 0.5;
+              const lerpSpeed = 0.1;
               teethRef.current.morphTargetInfluences[index] =
                 THREE.MathUtils.lerp(
                   teethRef.current.morphTargetInfluences[index],
